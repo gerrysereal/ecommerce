@@ -7,7 +7,7 @@ COPY . .
 RUN npm run build || mkdir -p public/build
 
 
-FROM php:8.3-cli-alpine
+FROM php:8.4-cli-alpine
 WORKDIR /app
 
 RUN apk add --no-cache git unzip libzip-dev sqlite-dev oniguruma-dev icu-dev libpng-dev \
