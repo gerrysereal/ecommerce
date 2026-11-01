@@ -1,0 +1,86 @@
+{
+  "_decorators-D7iQKNQG.js": {
+    "file": "assets/decorators-D7iQKNQG.js",
+    "name": "decorators"
+  },
+  "_plugin-CtgnkAgt.js": {
+    "file": "assets/plugin-CtgnkAgt.js",
+    "name": "plugin",
+    "imports": [
+      "_decorators-D7iQKNQG.js"
+    ]
+  },
+  "_widget-DXFowOXn.js": {
+    "file": "assets/widget-DXFowOXn.js",
+    "name": "widget",
+    "imports": [
+      "_decorators-D7iQKNQG.js"
+    ]
+  },
+  "node_modules/jodit/es2021/jodit.css": {
+    "file": "assets/jodit-CEmM6_Fw.css",
+    "src": "node_modules/jodit/es2021/jodit.css"
+  },
+  "node_modules/jodit/esm/index.js": {
+    "file": "assets/esm-yaAAGE1B.js",
+    "name": "esm",
+    "src": "node_modules/jodit/esm/index.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_decorators-D7iQKNQG.js",
+      "_widget-DXFowOXn.js",
+      "_plugin-CtgnkAgt.js"
+    ]
+  },
+  "node_modules/jodit/esm/plugins/resizer/resizer.js": {
+    "file": "assets/resizer-JL9T1dQb.js",
+    "name": "resizer",
+    "src": "node_modules/jodit/esm/plugins/resizer/resizer.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_decorators-D7iQKNQG.js",
+      "_plugin-CtgnkAgt.js"
+    ]
+  },
+  "node_modules/jodit/esm/plugins/video/video.js": {
+    "file": "assets/video-Dy12Un-t.js",
+    "name": "video",
+    "src": "node_modules/jodit/esm/plugins/video/video.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_decorators-D7iQKNQG.js",
+      "_widget-DXFowOXn.js"
+    ]
+  },
+  "node_modules/tom-select/dist/css/tom-select.css": {
+    "file": "assets/tom-select-dJhxz_Yn.css",
+    "src": "node_modules/tom-select/dist/css/tom-select.css"
+  },
+  "node_modules/tom-select/dist/esm/tom-select.complete.js": {
+    "file": "assets/tom-select.complete-Cs6JuNFs.js",
+    "name": "tom-select.complete",
+    "src": "node_modules/tom-select/dist/esm/tom-select.complete.js",
+    "isDynamicEntry": true
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-CKtlXVG4.css",
+    "name": "app",
+    "names": [
+      "app.css"
+    ],
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-bGzQmw3A.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true,
+    "dynamicImports": [
+      "node_modules/jodit/esm/index.js",
+      "node_modules/jodit/esm/plugins/resizer/resizer.js",
+      "node_modules/jodit/esm/plugins/video/video.js",
+      "node_modules/tom-select/dist/esm/tom-select.complete.js"
+    ]
+  }
+}
