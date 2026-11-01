@@ -19,14 +19,11 @@ jobs:
           sudo trivy fs --scanners secret --exit-code 0 .
 
       - name: 3. Fetch Secret ENV dari HashiCorp Vault
-        uses: hashicorp/vault-action@v3
-        with:
-          url: http://127.0.0.1:8200
-          token: ${{ secrets.VAULT_TOKEN }}
-          secrets: |
-            secret/data/ecommerce APP_KEY | APP_KEY ;
-            secret/data/ecommerce API_KEY | API_KEY ;
-            secret/data/ecommerce APP_ENV | APP_ENV
+        run: |
+          echo "=== Mengambil Secret dari HashiCorp Vault (Zero-Secret in Git) ==="
+          # Mengambil data dari Vault menggunakan auth secret yang ada di cluster lokal
+          VAULT_Data=$(kubectl exec -n vault vault-0 -- vault kv get -format=json secret/ecommerce)
+          echo "Berhasil mengambil secret dari path: secret/ecommerce"
 
       - name: 4. Run Unit Tests
         run: |
