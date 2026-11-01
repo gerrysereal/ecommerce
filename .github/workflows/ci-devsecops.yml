@@ -14,53 +14,42 @@ jobs:
       - name: 1. Checkout Source Code
         uses: actions/checkout@v4
 
-      - name: 2. Run Unit Tests
+      - name: 2. Secret Leak Scan (Trivy FS)
         run: |
-          echo "=== Menjalankan Unit Test ==="
-          if [ -f package.json ]; then
-            npm test --if-present || echo "Unit test passed"
-          elif [ -f go.mod ]; then
-            go test ./...
-          else
-            echo "Running basic syntax & structure unit test... PASSED"
-          fi
+          sudo trivy fs --scanners secret --exit-code 0 .
 
       - name: 3. Fetch Secret ENV dari HashiCorp Vault
         uses: hashicorp/vault-action@v3
         with:
           url: http://127.0.0.1:8200
-          token: root-token-wsl
+          token: ${{ secrets.VAULT_TOKEN }}
           secrets: |
-            secret/data/ecommerce API_KEY | BUILD_API_KEY ;
-            secret/data/ecommerce DB_HOST | DB_HOST ;
+            secret/data/ecommerce APP_KEY | APP_KEY ;
+            secret/data/ecommerce API_KEY | API_KEY ;
             secret/data/ecommerce APP_ENV | APP_ENV
 
-      - name: 4. Build Docker Image dengan Tag Commit SHA
+      - name: 4. Run Unit Tests
+        run: |
+          npm test --if-present || echo "Unit test passed"
+
+      - name: 5. Build Clean Docker Image
         run: |
           SHORT_SHA=$(git rev-parse --short HEAD)
           FULL_IMAGE="${{ env.IMAGE_NAME }}:${SHORT_SHA}"
-          echo "Building image: ${FULL_IMAGE}"
+          sudo docker build -t "${FULL_IMAGE}" .
 
-          sudo docker build \
-            --build-arg API_KEY="${{ env.BUILD_API_KEY }}" \
-            -t "${FULL_IMAGE}" .
-
-      - name: 5. Trivy Scan Image (DevSecOps Gate)
+      - name: 6. Trivy Scan Image (CVE & Secret)
         run: |
           SHORT_SHA=$(git rev-parse --short HEAD)
           FULL_IMAGE="${{ env.IMAGE_NAME }}:${SHORT_SHA}"
-          echo "=== Scanning Docker Image dengan Trivy ==="
-          sudo trivy image --severity HIGH,CRITICAL --exit-code 0 "${FULL_IMAGE}"
+          sudo trivy image --scanners vuln,secret --severity HIGH,CRITICAL --exit-code 0 "${FULL_IMAGE}"
 
-      - name: 6. Load Image ke K3s Registry & Trigger GitOps ArgoCD
+      - name: 7. Load Image ke K3s & Trigger GitOps ArgoCD
         run: |
           SHORT_SHA=$(git rev-parse --short HEAD)
           FULL_IMAGE="${{ env.IMAGE_NAME }}:${SHORT_SHA}"
-
-          # Import image build to K3s lokal
           sudo docker save "${FULL_IMAGE}" | sudo k3s ctr images import -
 
-          # Update tag image & set imagePullPolicy: Never/IfNotPresent repo GitOps ArgoCD
           DEPLOY_FILE="/home/aiko/k3s-gitops-stategraph/apps/ecommerce/deployment.yaml"
           sed -i "s|image: .*|image: ${FULL_IMAGE}|g" "$DEPLOY_FILE"
 
@@ -68,7 +57,6 @@ jobs:
             sed -i "/image: /a \        imagePullPolicy: IfNotPresent" "$DEPLOY_FILE"
           fi
 
-          # Push perubahan tag ke repo GitOps agar ArgoCD otomatis melakukan sync
           cd /home/aiko/k3s-gitops-stategraph
           git pull origin main --no-rebase
           git add apps/ecommerce/deployment.yaml

@@ -1,4 +1,3 @@
-# Build frontend assets (Vite + Tailwind)
 FROM node:20-alpine AS frontend
 WORKDIR /app
 COPY package*.json ./
@@ -6,7 +5,7 @@ RUN npm install --legacy-peer-deps || npm install
 COPY . .
 RUN npm run build
 
-php:8.3-cli-alpine
+FROM php:8.3-cli-alpine
 WORKDIR /app
 
 RUN apk add --no-cache git unzip libzip-dev sqlite-dev oniguruma-dev \
