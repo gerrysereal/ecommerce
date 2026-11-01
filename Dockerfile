@@ -20,4 +20,4 @@ RUN mkdir -p database storage/framework/sessions storage/framework/views storage
     && chmod -R 777 storage bootstrap/cache database public/build
 
 EXPOSE 3000
-CMD ["sh", "-c", "php artisan migrate --force || true; php artisan db:seed --force || true; php artisan serve --host=0.0.0.0 --port=3000"]
+CMD ["sh", "-c", "php artisan livewire:publish --assets || true; php artisan storage:link || true; php artisan migrate --seed --force || true; php artisan serve --host=0.0.0.0 --port=3000"]
